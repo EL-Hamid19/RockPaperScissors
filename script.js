@@ -2,7 +2,6 @@ const result = document.querySelector('.roundResult');
 let computerCount = 0;
 let playerCount = 0;
 let roundNumber = 1;
-let roundCount;
 const roundNumberDiv = document.querySelector(".roundNumber");
 const computerResult = document.querySelector('.computerResult');
 const playerResult = document.querySelector('.playerResult');
@@ -10,9 +9,10 @@ const playRound = document.querySelector('#playRound');
 const rockBtn = document.querySelector('#rock');
 const paperBtn = document.querySelector('#paper');
 const scissorsBtn = document.querySelector('#scissors');
+let roundCount = 1;
+let clickedOnce = 1;
 
-
-function waitForAnyClick(buttons) {
+async function waitForAnyClick(buttons) {
     return new Promise((resolve) => {
         const handleClick = (event) => {
         buttons.forEach((btn) => btn.removeEventListener("click", handleClick));
@@ -76,8 +76,10 @@ async function Play(){
     roundNumber++;
     if (roundCount === 5) {
         result.textContent = (playerCount > computerCount) ? "You have Won, Congrats"
-                           : (playerCount == computerCount) ? "It's a tie, i think so Congrats to all ^_^"
-                           :"You Have Lost, Looooserrr H@H@";
+                        : (playerCount == computerCount) ? "It's a tie, i think so Congrats to all ^_^"
+                        :"You Have Lost, Looooserrr H@H@";
+        roundCount = 1;
+        clickedOnce = 1;
         return;
     }
     roundCount++;
@@ -85,7 +87,10 @@ async function Play(){
 }
 
 
-playRound.addEventListener('click', (e) => {
-    roundCount = 1;
-    Play()
+
+playRound.addEventListener('click', () => {
+    if(roundCount == 1 && clickedOnce == 1){
+        clickedOnce = 0;
+        Play()
+    }
 });
