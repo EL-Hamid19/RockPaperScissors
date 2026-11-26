@@ -42,7 +42,6 @@ async function Play(){
 
     const btns = [rockBtn, paperBtn, scissorsBtn];
     const clickedBtn = await waitForAnyClick(btns);
-    console.log("User clicked:", clickedBtn.textContent);
 
     switch (clickedBtn.textContent) {
         case 'Rock':
