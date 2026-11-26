@@ -1,6 +1,31 @@
-function Play(){
+const result = document.querySelector('.roundResult');
+let computerCount = 0;
+let playerCount = 0;
+let roundNumber = 1;
+let roundCount;
+const roundNumberDiv = document.querySelector(".roundNumber");
+const computerResult = document.querySelector('.computerResult');
+const playerResult = document.querySelector('.playerResult');
+const playRound = document.querySelector('#playRound');
+const rockBtn = document.querySelector('#rock');
+const paperBtn = document.querySelector('#paper');
+const scissorsBtn = document.querySelector('#scissors');
+
+
+function waitForAnyClick(buttons) {
+    return new Promise((resolve) => {
+        const handleClick = (event) => {
+        buttons.forEach((btn) => btn.removeEventListener("click", handleClick));
+        resolve(event.currentTarget);
+        };
+
+        buttons.forEach((btn) => btn.addEventListener("click", handleClick));
+    });
+}
+
+async function Play(){
     let randomNumber = Math.random();
-    let UserChoice = prompt("choose ur fighter:");
+    let UserChoice = '';
     let ComputerChoice = randomNumber <= 1/3 ? returnChoice(0)
                     : randomNumber <= 2/3 ? returnChoice(1)
                     : returnChoice(2);
@@ -15,18 +40,53 @@ function Play(){
         }
     }
 
-    let result = (UserChoice.toLowerCase() == "rock" && ComputerChoice == "scissors") ? "You win -_-"
-            : (UserChoice.toLowerCase() == "scissors" && ComputerChoice == "paper") ? "You win -_-"
-            : (UserChoice.toLowerCase() == "paper" && ComputerChoice == "rock") ? "You win -_-"
-            : (UserChoice.toLowerCase() == ComputerChoice) ? "It's a tie,"
-            : "You lost X_X";
-    console.log("You choose " + UserChoice + " and the computer chooses " + ComputerChoice + " So:")
-    console.log(result);
+    const btns = [rockBtn, paperBtn, scissorsBtn];
+    const clickedBtn = await waitForAnyClick(btns);
+    console.log("User clicked:", clickedBtn.textContent);
+
+    switch (clickedBtn.textContent) {
+        case 'Rock':
+            UserChoice = 'rock';
+            break;
+        case 'Scissors':
+            UserChoice = 'scissors';
+            break;
+        case 'Paper':
+            UserChoice = 'paper';
+            break;
+    }
+
+    if (UserChoice === "rock" && ComputerChoice == "scissors") {
+        result.textContent = 'You win -_-';
+        playerCount++;
+    } else if (UserChoice === "scissors" && ComputerChoice == "paper") {
+        result.textContent = 'You win -_-';
+        playerCount++;
+    } else if (UserChoice === "paper" && ComputerChoice == "rock") {
+        result.textContent = 'You win -_-';
+        playerCount++;
+    } else if (UserChoice === ComputerChoice) {
+        result.textContent = "It's a tie";
+    } else {
+        result.textContent = 'You lost X_X';
+        computerCount++;
+    }
+    roundNumberDiv.textContent = `Round Number: ${roundNumber}`;
+    computerResult.textContent = `Computer Points: ${computerCount}`;
+    playerResult.textContent = `Player Points: ${playerCount}`;
+    roundNumber++;
+    if (roundCount === 5) {
+        result.textContent = (playerCount > computerCount) ? "You have Won, Congrats"
+                           : (playerCount == computerCount) ? "It's a tie, i think so Congrats to all ^_^"
+                           :"You Have Lost, Looooserrr H@H@";
+        return;
+    }
+    roundCount++;
+    Play();
 }
 
-function PlayGame() {
-    for (let i = 0; i < 5; i++) {
-        Play();
-    }
-}
-PlayGame();
+
+playRound.addEventListener('click', (e) => {
+    roundCount = 1;
+    Play()
+});
